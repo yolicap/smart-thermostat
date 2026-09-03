@@ -230,6 +230,7 @@ void hvacStateUpdate()
   float currentTemp;
   float minTemp, maxTemp;
   float autoMinTemp, autoMaxTemp;
+  int64_t currentFanRuntime;
   HVAC_MODE prev_mode = OperatingParameters.hvacOpMode;
 
   if (ModeChangeRequested && (millis() - ModeChangeRequestTime > 2000))
@@ -252,6 +253,8 @@ void hvacStateUpdate()
   autoMinTemp = get_min_temp(&OperatingParameters, true);
   autoMaxTemp = get_max_temp(&OperatingParameters, true);
 
+  currentFanRuntime = tracker_get_sum(&tracker);
+
   switch (OperatingParameters.hvacSetMode) {
   case OFF:
     set_hvac_mode(OFF);
@@ -273,6 +276,13 @@ void hvacStateUpdate()
       {
         set_hvac_mode(IDLE);
         COND_LOG(prev_mode != IDLE, "Target temp reached: Stopping heat mode: Current: %.2f  Hi Limit: %.2f", currentTemp, maxTemp);
+      } else if (currentFanRuntime < OperatingParameters.minFanRuntime ){
+        set_hvac_mode(FAN_ONLY);
+        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %.2f, min runtime: %.2f", 
+          currentTemp, 
+          currentFanRuntime, 
+          OperatingParameters.minFanRuntime
+        );
       }
     }
   break;
@@ -295,6 +305,13 @@ void hvacStateUpdate()
     if (currentTemp > maxTemp) {
       set_hvac_mode(COOL);
       COND_LOG(prev_mode != COOL, "Entering cool mode: Current: %.2f  Hi Limit: %.2f", currentTemp, maxTemp);
+    } else if (currentFanRuntime < OperatingParameters.minFanRuntime ){
+        set_hvac_mode(FAN_ONLY);
+        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %.2f, min runtime: %.2f", 
+          currentTemp, 
+          currentFanRuntime, 
+          OperatingParameters.minFanRuntime
+        );
     } else {
       set_hvac_mode(IDLE);
       COND_LOG(prev_mode != IDLE, "Target temp reached: Stopping cool mode: Current: %.2f  Lo Limit: %.2f", currentTemp, minTemp);
@@ -307,6 +324,13 @@ void hvacStateUpdate()
     } else if (currentTemp > autoMaxTemp) {
       set_hvac_mode(COOL);
       COND_LOG(prev_mode != COOL, "Entering auto cool mode: Current: %.2f  auto max Limit: %.2f", currentTemp, autoMaxTemp);
+    } else if (currentFanRuntime < OperatingParameters.minFanRuntime ){
+        set_hvac_mode(FAN_ONLY);
+        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %.2f, min runtime: %.2f", 
+          currentTemp, 
+          currentFanRuntime, 
+          OperatingParameters.minFanRuntime
+        );
     } else {
       set_hvac_mode(IDLE);
       COND_LOG(prev_mode != IDLE, "Target temp reached: Exiting auto heat/cool mode: Current: %.2f  auto min Limit: %.2f"\
