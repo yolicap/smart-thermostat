@@ -196,6 +196,20 @@ static void set_hvac_mode(HVAC_MODE mode)
       ESP_LOGI(__FUNCTION__, "Hourly Fan run time: %.2f min", (tracker_get_sum(&tracker) / 1000.0 / 60.0));
     }
 
+  // Fan is continously running for circulation. Keep track and update.
+  if ((mode == FAN_ONLY) &&
+    (OperatingParameters.hvacOpMode == FAN_ONLY))
+  {
+    // Add data point with 30 second granularity to prevent overflilling buffer.
+    if (millis() - lastFanOnTime >= 30000)
+    {
+      tracker_add_value(&tracker, millis() - lastFanOnTime);
+      ESP_LOGI(__FUNCTION__, "Fan run time: %lld ms", millis() - lastFanOnTime);
+      ESP_LOGI(__FUNCTION__, "Hourly Fan run time: %.2f min", (tracker_get_sum(&tracker) / 1000.0 / 60.0));
+      lastFanOnTime = millis();
+    }
+  }
+
   OperatingParameters.hvacOpMode = mode;
 }
 
@@ -276,9 +290,9 @@ void hvacStateUpdate()
       {
         set_hvac_mode(IDLE);
         COND_LOG(prev_mode != IDLE, "Target temp reached: Stopping heat mode: Current: %.2f  Hi Limit: %.2f", currentTemp, maxTemp);
-      } else if (currentFanRuntime < OperatingParameters.minFanRuntime ){
+      } else if (currentFanRuntime < OperatingParameters.minFanRuntime){
         set_hvac_mode(FAN_ONLY);
-        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %.2f, min runtime: %.2f", 
+        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %lld, min runtime: %lld ", 
           currentTemp, 
           currentFanRuntime, 
           OperatingParameters.minFanRuntime
@@ -307,7 +321,7 @@ void hvacStateUpdate()
       COND_LOG(prev_mode != COOL, "Entering cool mode: Current: %.2f  Hi Limit: %.2f", currentTemp, maxTemp);
     } else if (currentFanRuntime < OperatingParameters.minFanRuntime ){
         set_hvac_mode(FAN_ONLY);
-        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %.2f, min runtime: %.2f", 
+        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %lld, min runtime: %lld", 
           currentTemp, 
           currentFanRuntime, 
           OperatingParameters.minFanRuntime
@@ -326,7 +340,7 @@ void hvacStateUpdate()
       COND_LOG(prev_mode != COOL, "Entering auto cool mode: Current: %.2f  auto max Limit: %.2f", currentTemp, autoMaxTemp);
     } else if (currentFanRuntime < OperatingParameters.minFanRuntime ){
         set_hvac_mode(FAN_ONLY);
-        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %.2f, min runtime: %.2f", 
+        COND_LOG(prev_mode != FAN_ONLY, "Running fan: Current: %.2f, fan runtime: %lld, min runtime: %lld", 
           currentTemp, 
           currentFanRuntime, 
           OperatingParameters.minFanRuntime

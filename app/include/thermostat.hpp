@@ -88,7 +88,7 @@ typedef struct
     bool thermostatBeepEnable;
     uint16_t thermostatSleepTime;
 
-    uint8_t minFanRuntime;
+    uint64_t minFanRuntime;
 
     char *timezone;
     uint16_t timezone_sel;
