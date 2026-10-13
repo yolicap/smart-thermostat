@@ -123,4 +123,6 @@ void app_main()
   // Play the startup sound
   audioStartupBeep();
   ESP_LOGI (TAG, "Startup done");
+
+  ESP_LOGI (TAG, "UI TEST - DEV VERSION");
 }

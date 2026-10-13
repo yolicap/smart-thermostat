@@ -317,6 +317,7 @@ void ui_event_HomeBtn( lv_event_t * e) {
 if ( event_code == LV_EVENT_CLICKED) {
       tftAwaken( e );
       _ui_screen_change( &ui_MainScreen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_MainScreen_screen_init);
+      _ui_screen_delete( &ui_Info );
 }
 }
 void ui_event_Setup( lv_event_t * e) {
@@ -359,6 +360,7 @@ if ( event_code == LV_EVENT_CLICKED) {
       tftAwaken( e );
       _ui_screen_change( &ui_MainScreen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_MainScreen_screen_init);
       SaveConfigSettings( e );
+      _ui_screen_delete( &ui_Setup );
 }
 }
 void ui_event_SetupCancelBtn( lv_event_t * e) {
@@ -366,6 +368,7 @@ void ui_event_SetupCancelBtn( lv_event_t * e) {
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_MainScreen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_MainScreen_screen_init);
       tftBeep( e );
+      _ui_screen_delete( &ui_Setup );
 }
 }
 void ui_event_LessCommonSetup( lv_event_t * e) {
@@ -414,6 +417,7 @@ void ui_event_UncommonCancelBtn( lv_event_t * e) {
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Setup, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_Setup_screen_init);
       tftBeep( e );
+      _ui_screen_delete( &ui_LessCommonSetup );
 }
 }
 void ui_event_SsidDropdown( lv_event_t * e) {
@@ -442,6 +446,7 @@ if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_LessCommonSetup, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_LessCommonSetup_screen_init);
       tftBeep( e );
       stopWifiScan( e );
+      _ui_screen_delete( &ui_WifiConfig );
 }
 }
 void ui_event_WifiStatusLabel( lv_event_t * e) {
@@ -494,6 +499,7 @@ void ui_event_MqttCancelBtn( lv_event_t * e) {
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Setup, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_Setup_screen_init);
       tftBeep( e );
+      _ui_screen_delete( &ui_MqttConfig );
 }
 }
 void ui_event_DeviceHostname( lv_event_t * e) {
@@ -515,6 +521,7 @@ void ui_event_DevNameCancelBtn( lv_event_t * e) {
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_LessCommonSetup, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_LessCommonSetup_screen_init);
       tftBeep( e );
+      _ui_screen_delete( &ui_DeviceName );
 }
 }
 void ui_event_ThermostatRestart( lv_event_t * e) {
@@ -532,14 +539,14 @@ lv_disp_t *dispp = lv_disp_get_default();
 lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), false, LV_FONT_DEFAULT);
 lv_disp_set_theme(dispp, theme);
 ui_MainScreen_screen_init();
-ui_Info_screen_init();
-ui_Setup_screen_init();
-ui_LessCommonSetup_screen_init();
-ui_WifiConfig_screen_init();
-ui_MatterConfig_screen_init();
-ui_MqttConfig_screen_init();
-ui_DeviceName_screen_init();
-ui_ThermostatRestart_screen_init();
+// ui_Info_screen_init();
+// ui_Setup_screen_init();
+// ui_LessCommonSetup_screen_init();
+// ui_WifiConfig_screen_init();
+// ui_MatterConfig_screen_init();
+// ui_MqttConfig_screen_init();
+// ui_DeviceName_screen_init();
+// ui_ThermostatRestart_screen_init();
 ui____initial_actions0 = lv_obj_create(NULL);
 lv_disp_load_scr( ui_MainScreen);
 }
